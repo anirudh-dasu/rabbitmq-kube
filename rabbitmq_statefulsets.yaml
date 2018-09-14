@@ -5,20 +5,45 @@ metadata:
   name: rabbitmq
   labels:
     app: rabbitmq
-    type: LoadBalancer
+    type: Service
 spec:
-  type: NodePort
+  type: ClusterIP
+  clusterIP: None
   ports:
-   - name: http
+   -
+     name: http
      protocol: TCP
      port: 15672
      targetPort: 15672
-     nodePort: 31672
-   - name: amqp
+   -
+     name: amqp
      protocol: TCP
      port: 5672
      targetPort: 5672
-     nodePort: 30672
+  selector:
+    app: rabbitmq
+---
+kind: Service
+apiVersion: v1
+metadata:
+  namespace: test-rabbitmq
+  name: rabbitmq-external
+  labels:
+    app: rabbitmq
+    type: ExternalService
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      protocol: TCP
+      port: 15672
+      targetPort: 15672
+      nodePort: 31672
+    - name: amqp
+      protocol: TCP
+      port: 5672
+      targetPort: 5672
+      nodePort: 30672
   selector:
     app: rabbitmq
 ---
